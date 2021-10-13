@@ -9,29 +9,34 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Factorizar estas 2 funciones:
   const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('https://swapi.dev/api/films/');
+      const response = await fetch(
+        'https://fir-movie-app-2761f-default-rtdb.firebaseio.com/movies.json'
+      );
 
       if (!response.ok) {
         throw new Error('Something went wrong ' + response.status);
       }
 
       const data = await response.json();
+      console.log(data);
+      const loadedMovies = [];
 
-      const transformedData = data.results.map(movie => {
-        return {
-          id: movie.episode_id,
-          title: movie.title,
-          openingText: movie.opening_crawl,
-          releaseDate: movie.release_date,
-        };
-      });
+      for (const key in data) {
+        loadedMovies.push({
+          id: key,
+          title: data[key].title,
+          openingText: data[key].openingText,
+          releaseData: data[key].releaseData,
+        });
+      }
 
-      setMovies(transformedData);
+      setMovies(loadedMovies);
     } catch (error) {
       setError(error.message);
     }
@@ -42,8 +47,28 @@ function App() {
     fetchMoviesHandler();
   }, [fetchMoviesHandler]);
 
-  const addMovieHandler = movie => {
-    console.log(movie);
+  const addMovieHandler = async movie => {
+    try {
+      const response = await fetch(
+        'https://fir-movie-app-2761f-default-rtdb.firebaseio.com/movies.json',
+        {
+          method: 'POST',
+          body: JSON.stringify(movie),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Something went wrong ' + response.status);
+      }
+
+      const data = response.json();
+      console.log(data);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   let content = <p>Movie Not Found.</p>;
