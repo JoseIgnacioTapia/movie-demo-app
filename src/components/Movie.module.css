@@ -8,6 +8,10 @@
   color: white;
 }
 
+.movie button {
+  background-color: #333;
+}
+
 .movie h2 {
   font-size: 2rem;
   color: #f7e702;

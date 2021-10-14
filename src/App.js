@@ -32,10 +32,10 @@ function App() {
           id: key,
           title: data[key].title,
           openingText: data[key].openingText,
-          releaseData: data[key].releaseData,
+          releaseDate: data[key].releaseDate,
         });
       }
-
+      console.log(loadedMovies);
       setMovies(loadedMovies);
     } catch (error) {
       setError(error.message);
@@ -64,7 +64,7 @@ function App() {
         throw new Error('Something went wrong ' + response.status);
       }
 
-      const data = response.json();
+      const data = await response.json();
       console.log(data);
     } catch (error) {
       setError(error.message);
